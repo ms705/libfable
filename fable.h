@@ -3,6 +3,9 @@
 #ifndef LIBFABLE_INTERFACE_H_
 #define LIBFABLE_INTERFACE_H_
 
+#include <stdint.h>
+#include <stdio.h>
+
 // ---------------------------------------------
 // Data structures
 // ---------------------------------------------
@@ -34,6 +37,9 @@ typedef struct {
   xio_handle_t* handle;
 } xio_buffer_t;
 
+typedef struct {
+  size_t buf_size;
+} xio_config_t;
 
 // ---------------------------------------------
 // Methods
