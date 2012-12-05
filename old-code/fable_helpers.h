@@ -7,11 +7,21 @@
 #include <errno.h>
 #include <sys/select.h>
 #include <limits.h>
+#include <stdio.h>
+#include <cassert>
 
 #include <ostream>
 
-#include "stddefines.h"
+//#include "stddefines.h"
 #include "fable.h"
+
+/* Wrapper to check for errors */
+#define CHECK_ERROR(a)                                       \
+   if (a)                                                    \
+   {                                                         \
+      perror("Error at line\n\t" #a "\nSystem Msg");         \
+      assert ((a) == 0);                                     \
+   }
 
 // Reads exactly len bytes or up to EOF.
 void fable_read_all(void* handle, char* buf, int len) {
@@ -125,12 +135,12 @@ void fable_read_all_multi(void** handles, std::ostream** streams, unsigned int n
       continue;
     }
 
-    for(unsigned i = 0; i < nstreams; i++) {
+    for(unsigned int i = 0; i < nstreams; i++) {
       if(handles[i] && fable_ready(handles[i], FABLE_SELECT_READ, &rfds, &wfds, &efds)) {
 	struct fable_buf* buf = fable_get_read_buf(handles[i], 4096);
 	if(!buf) {
 	  if(!errno) {
-	    dprintf("Reducer %lu: mapper %u: EOF\n", id, i);
+	    //dprintf("Reducer %d: mapper %d: EOF\n", i, i);
 	    fable_close(handles[i]);
 	    handles[i] = 0;
 	    conns_done++;

@@ -499,10 +499,13 @@ void*
 fable_listen_shmem_pipe(const char* name) {
   
   void* unix_handle = fable_listen_unixdomain(name);
-  if(!unix_handle)
+  if(!unix_handle) {
+    printf("no unix handle!\n");
     return 0;
+  }
   struct shmem_pipe_handle* new_handle = (struct shmem_pipe_handle*)malloc(sizeof(struct shmem_pipe_handle));
   if(!new_handle) {
+    printf("no memory!\n");
     errno = ENOMEM;
     return 0;
   }

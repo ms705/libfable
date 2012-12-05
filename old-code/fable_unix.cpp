@@ -1,5 +1,5 @@
 
-#include "stddefines.h"
+//#include "stddefines.h"
 #include "io_helpers.h"
 #include "fable.h"
 
@@ -7,11 +7,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
+#include <sys/stat.h>
 
 #include <sys/socket.h>
 #include <linux/un.h> // For UNIX_PATH_MAX
 
-char coord_dir[] = "/tmp/phoenix_coord_XXXXXX";
+char coord_dir[] = "/tmp/fable";
 char fable_unix_buf[4096];
 
 #define MAX_UNIX_BUF (4096 - (sizeof(struct fable_buf) + sizeof(struct iovec)))
@@ -25,9 +27,11 @@ struct fable_buf_unix {
 
 void fable_init_unixdomain() {
 
-  if(!mkdtemp(coord_dir)) {
-    fprintf(stderr, "Couldn't create a coordination directory: %s\n", strerror(errno));
-    exit(1);
+  if(int err = mkdir(coord_dir, S_IRWXU) != 0) {
+    if (err == EEXIST) {
+      fprintf(stderr, "Couldn't create a coordination directory: %s\n", strerror(errno));
+      exit(1);
+    }
   }
 
 }
